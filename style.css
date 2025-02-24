@@ -97,7 +97,7 @@ svg {
   font-weight: bold;
 }
 
-small {
+span.footer {
   font-size: .5rem;
   color: #727272;
   position: absolute;
