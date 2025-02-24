@@ -34,9 +34,12 @@ async function updateOTP(base32Key) {
     const timeCounter = Math.floor(epochTime / timeStep);
     const timeRemaining = timeStep - (epochTime % timeStep);
 
-    const otp = await computeTOTP(base32Key, timeCounter);
-    document.getElementById("otp").textContent = otp;
-    updateProgressCircle(timeRemaining, timeStep);
+    if (timeRemaining === 30 || otpCode.textContent === "") {
+        const otp = await computeTOTP(base32Key, timeCounter);
+        otpCode.textContent = otp;
+      }
+    
+      updateProgressCircle(timeRemaining, timeStep);
 }
 
 async function computeTOTP(base32Key, counter) {
@@ -82,15 +85,6 @@ function truncateOTP(hmac) {
 
 function updateProgressCircle(timeRemaining, totalTime) {
     const progressCircle = document.getElementById("progressCircle");
-
-    function updateProgress() {
-        const epochTime = Math.floor(Date.now() / 1000);
-        const timeLeft = totalTime - (epochTime % totalTime);
-        const dashOffset = (timeLeft / totalTime) * 251.2;
-        progressCircle.style.strokeDashoffset = dashOffset;
-    }
-
-    updateProgress();
-    clearInterval(interval);
-    interval = setInterval(updateProgress, 1000);
-}
+    const dashOffset = (timeRemaining / totalTime) * 251.2;
+    progressCircle.style.strokeDashoffset = dashOffset;
+  }
