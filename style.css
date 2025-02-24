@@ -96,3 +96,12 @@ svg {
   font-size: 18px;
   font-weight: bold;
 }
+
+small {
+  font-size: .6rem;
+  color: #727272;
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+}
