@@ -1,31 +1,53 @@
 <!DOCTYPE html>
 <html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OTP Authenticator - FrInfo</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <div class="container">
-        <h2>OTP Authenticator</h2>
-        <input type="password" id="key" onkeyup="startOTP()" placeholder="Insira a chave OTP Base32">
-        <span id="invalid">Chave inválida</span>
-            
-        <div id="otp-container">
-          <div class="progress-container">
-              <svg width="100" height="100">
-                  <circle cx="50" cy="50" r="40" class="progress-background"></circle>
-                  <circle cx="50" cy="50" r="40" class="progress-circle" id="progressCircle"></circle>
-              </svg>
-          </div>
-          <div class="otp-display">
-            <span id="otp" onclick="copyOTP()"></span>
-          </div>
-          <span id="copied">Copiado para a área de transferência</span>
+      <h2>OTP Authenticator</h2>
+      <input
+        type="password"
+        id="key"
+        onchange="startOTP()"
+        placeholder="Insira a chave OTP Base32"
+      />
+      <span id="invalid">Chave inválida</span>
+
+      <div id="otp-container">
+        <div class="progress-container">
+          <svg width="100" height="100">
+            <circle cx="50" cy="50" r="40" class="progress-background"></circle>
+            <circle
+              cx="50"
+              cy="50"
+              r="40"
+              class="progress-circle"
+              id="progressCircle"
+            ></circle>
+          </svg>
+        </div>
+        <div class="otp-display">
+          <span id="otp" onclick="copyOTP()"></span>
+        </div>
+        <span id="copied">Copiado para a área de transferência</span>
+        <br />
+        <br />
+        <p class="hint">
+          🔖 Pressione <kbd>Ctrl + D</kbd> (ou <kbd>Cmd + D</kbd> para MacOS)
+          para salvar como favorito - funciona como um atalho para o OTP
+          Authenticator já com a sua chave configurada
+          <br />
+          <br />
+          (recomenda-se colocar o nome do OTP no favorito para facilitar a
+          identificação).
+        </p>
       </div>
     </div>
-    <span class="footer">v0.0.1 by Fernando Conde</span>
+    <span class="footer">v0.1.1 by Fernando Conde</span>
     <script src="script.js"></script>
-</body>
+  </body>
 </html>

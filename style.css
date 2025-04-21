@@ -105,3 +105,10 @@ span.footer {
   left: 50%;
   transform: translateX(-50%);
 }
+
+.hint {
+  font-size: .8rem;
+  color: #727272;
+  margin-top: 10px;
+  text-align: justify;
+}

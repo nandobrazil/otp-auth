@@ -1,31 +1,44 @@
 let interval;
 const otpContainer = document.getElementById('otp-container');
 const invalid = document.getElementById('invalid');
+const inputKey = document.getElementById("key");
 const otpCode = document.getElementById('otp');
+const queryParams = new URLSearchParams(window.location.search);
+
+if (queryParams.has('otp')) {
+    const otp = queryParams.get('otp');
+    inputKey.value = otp;
+    startOTP();
+}
 
 function isValidBase32(secret) {
-  const base32Regex = /^[A-Z2-7]+=*$/i;
-  return base32Regex.test(secret) && secret.replace(/=/g, "").length >= 16;
+    const base32Regex = /^[A-Z2-7]+=*$/i;
+    return base32Regex.test(secret) && secret.replace(/=/g, "").length >= 16;
 }
 
 function startOTP() {
-  clearInterval(interval);
-  const key = document.getElementById("key").value.trim();
-  if (!isValidBase32(key)) {
-      invalid.style.display = key.length > 0 ? 'block' : 'none';
-      otpContainer.style.display = 'none';
-      return;
-  }
-  otpContainer.style.display = 'block';
-  updateOTP(key);
-  interval = setInterval(() => updateOTP(key), 1000);
+    clearInterval(interval);
+    const key = document.getElementById("key").value.trim();
+    if (!isValidBase32(key)) {
+        invalid.style.display = key.length > 0 ? 'block' : 'none';
+        otpContainer.style.display = 'none';
+        return;
+    }
+    otpContainer.style.display = 'block';
+    const encodedKey = encodeURIComponent(key);
+    const params = new URLSearchParams({ otp: encodedKey });
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    history.replaceState(null, "", newUrl);
+
+    updateOTP(key);
+    interval = setInterval(() => updateOTP(key), 1000);
 }
 
 function copyOTP() {
-  const otp = document.getElementById("otp").textContent;
-  navigator.clipboard.writeText(otp);
-  document.getElementById("copied").style.display = "block";
-  setTimeout(() => document.getElementById("copied").style.display = "none", 5000);
+    const otp = document.getElementById("otp").textContent;
+    navigator.clipboard.writeText(otp);
+    document.getElementById("copied").style.display = "block";
+    setTimeout(() => document.getElementById("copied").style.display = "none", 5000);
 }
 
 async function updateOTP(base32Key) {
@@ -37,9 +50,9 @@ async function updateOTP(base32Key) {
     if (timeRemaining === 30 || otpCode.textContent === "") {
         const otp = await computeTOTP(base32Key, timeCounter);
         otpCode.textContent = otp;
-      }
-    
-      updateProgressCircle(timeRemaining, timeStep);
+    }
+
+    updateProgressCircle(timeRemaining, timeStep);
 }
 
 async function computeTOTP(base32Key, counter) {
@@ -87,4 +100,4 @@ function updateProgressCircle(timeRemaining, totalTime) {
     const progressCircle = document.getElementById("progressCircle");
     const dashOffset = (timeRemaining / totalTime) * 251.2;
     progressCircle.style.strokeDashoffset = dashOffset;
-  }
+}
