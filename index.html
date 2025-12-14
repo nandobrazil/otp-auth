@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,10 +13,9 @@
         type="password"
         id="key"
         onchange="startOTP()"
-        placeholder="Insira a chave OTP Base32"
+        placeholder="Enter Base32 OTP key"
       />
-      <span id="invalid">Chave inválida</span>
-
+      <span id="invalid">Invalid key</span>
       <div id="otp-container">
         <div class="progress-container">
           <svg width="100" height="100">
@@ -33,21 +32,21 @@
         <div class="otp-display">
           <span id="otp" onclick="copyOTP()"></span>
         </div>
-        <span id="copied">Copiado para a área de transferência</span>
+        <span id="copied">Copied to clipboard</span>
         <br />
         <br />
         <p class="hint">
-          🔖 Pressione <kbd>Ctrl + D</kbd> (ou <kbd>Cmd + D</kbd> para MacOS)
-          para salvar como favorito - funciona como um atalho para o OTP
-          Authenticator já com a sua chave configurada
+          🔖 Press <kbd>Ctrl + D</kbd> (or <kbd>Cmd + D</kbd> for MacOS)
+          to save as bookmark - works as a shortcut to the OTP
+          Authenticator with your key already configured
           <br />
           <br />
-          (recomenda-se colocar o nome do OTP no favorito para facilitar a
-          identificação).
+          (it's recommended to add the OTP name to the bookmark for easier
+          identification).
         </p>
       </div>
     </div>
-    <span class="footer">v0.1.1 by Fernando Conde</span>
+    <span class="footer">v0.1.2 by oconde.dev</span>
     <script src="script.js"></script>
   </body>
 </html>
