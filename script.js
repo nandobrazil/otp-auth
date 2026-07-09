@@ -11,6 +11,12 @@ if (queryParams.has('otp')) {
     startOTP();
 }
 
+// brilho de fundo seguindo o cursor
+window.addEventListener('pointermove', (e) => {
+    document.body.style.setProperty('--mx', `${e.clientX}px`);
+    document.body.style.setProperty('--my', `${e.clientY}px`);
+});
+
 function isValidBase32(secret) {
     const base32Regex = /^[A-Z2-7]+=*$/i;
     return base32Regex.test(secret) && secret.replace(/=/g, '').length >= 16;
@@ -18,10 +24,11 @@ function isValidBase32(secret) {
 
 function toggleKeyVisibility() {
     const btn = document.getElementById('toggleVisibility');
+    const icon = document.getElementById('toggleIcon').querySelector('use');
     const isHidden = inputKey.type === 'password';
     inputKey.type = isHidden ? 'text' : 'password';
     btn.setAttribute('aria-label', isHidden ? 'Ocultar chave' : 'Mostrar chave');
-    btn.textContent = isHidden ? '🙈' : '👁';
+    icon.setAttribute('href', isHidden ? '#icon-hide' : '#icon-show');
 }
 
 function startOTP() {
@@ -48,10 +55,21 @@ function copyOTP() {
     const otp = otpCode.textContent;
     if (!otp) return;
     navigator.clipboard.writeText(otp);
-    const copied = document.getElementById('copied');
-    copied.classList.add('show');
+
+    const btn = document.querySelector('.copy-btn');
+    const icon = document.getElementById('copyIcon').querySelector('use');
+    const label = document.getElementById('copyLabel');
+
+    btn.classList.add('copied');
+    icon.setAttribute('href', '#icon-check');
+    label.textContent = 'Copiado!';
+
     clearTimeout(copyOTP._timeout);
-    copyOTP._timeout = setTimeout(() => copied.classList.remove('show'), 2000);
+    copyOTP._timeout = setTimeout(() => {
+        btn.classList.remove('copied');
+        icon.setAttribute('href', '#icon-copy');
+        label.textContent = 'Copiar código';
+    }, 2000);
 }
 
 async function updateOTP(base32Key) {
@@ -110,7 +128,7 @@ function truncateOTP(hmac) {
 }
 
 function updateProgressCircle(timeRemaining, totalTime) {
-    const circumference = 2 * Math.PI * 52;
+    const circumference = 2 * Math.PI * 56;
     progressCircle.style.strokeDasharray = circumference;
     progressCircle.style.strokeDashoffset = (timeRemaining / totalTime) * circumference;
 
