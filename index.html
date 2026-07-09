@@ -1,52 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
     <title>OTP Authenticator - FrInfo</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="container">
-      <h2>OTP Authenticator</h2>
-      <input
-        type="password"
-        id="key"
-        onchange="startOTP()"
-        placeholder="Enter Base32 OTP key"
-      />
-      <span id="invalid">Invalid key</span>
+    <main class="card">
+      <h1>OTP Authenticator</h1>
+
+      <div class="key-field">
+        <input
+          type="password"
+          id="key"
+          inputmode="text"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          onchange="startOTP()"
+          placeholder="Cole sua chave Base32"
+        />
+        <button
+          type="button"
+          class="toggle-visibility"
+          id="toggleVisibility"
+          onclick="toggleKeyVisibility()"
+          aria-label="Mostrar chave"
+          title="Mostrar/ocultar chave"
+        >👁</button>
+      </div>
+      <p id="invalid">Chave inválida</p>
+
       <div id="otp-container">
         <div class="progress-container">
-          <svg width="100" height="100">
-            <circle cx="50" cy="50" r="40" class="progress-background"></circle>
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              class="progress-circle"
-              id="progressCircle"
-            ></circle>
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" class="progress-background"></circle>
+            <circle cx="60" cy="60" r="52" class="progress-circle" id="progressCircle"></circle>
           </svg>
+          <button type="button" class="otp-code" id="otp" onclick="copyOTP()" title="Clique para copiar"></button>
         </div>
-        <div class="otp-display">
-          <span id="otp" onclick="copyOTP()"></span>
-        </div>
-        <span id="copied">Copied to clipboard</span>
-        <br />
-        <br />
+        <p id="copied" role="status">Copiado!</p>
+
         <p class="hint">
-          🔖 Press <kbd>Ctrl + D</kbd> (or <kbd>Cmd + D</kbd> for MacOS)
-          to save as bookmark - works as a shortcut to the OTP
-          Authenticator with your key already configured
+          🔖 Pressione <kbd>Ctrl</kbd>+<kbd>D</kbd> (ou <kbd>Cmd</kbd>+<kbd>D</kbd> no Mac) para
+          salvar como favorito — funciona como atalho direto pra esse código, com a chave já
+          configurada.
           <br />
-          <br />
-          (it's recommended to add the OTP name to the bookmark for easier
-          identification).
+          Dica: dê um nome ao favorito pra identificar depois.
         </p>
       </div>
-    </div>
-    <span class="footer">v0.1.2 by oconde.dev</span>
+    </main>
+    <span class="footer">v0.2.0 · by oconde.dev</span>
     <script src="script.js"></script>
   </body>
 </html>

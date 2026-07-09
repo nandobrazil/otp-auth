@@ -1,44 +1,57 @@
 let interval;
 const otpContainer = document.getElementById('otp-container');
 const invalid = document.getElementById('invalid');
-const inputKey = document.getElementById("key");
+const inputKey = document.getElementById('key');
 const otpCode = document.getElementById('otp');
+const progressCircle = document.getElementById('progressCircle');
 const queryParams = new URLSearchParams(window.location.search);
 
 if (queryParams.has('otp')) {
-    const otp = queryParams.get('otp');
-    inputKey.value = otp;
+    inputKey.value = queryParams.get('otp');
     startOTP();
 }
 
 function isValidBase32(secret) {
     const base32Regex = /^[A-Z2-7]+=*$/i;
-    return base32Regex.test(secret) && secret.replace(/=/g, "").length >= 16;
+    return base32Regex.test(secret) && secret.replace(/=/g, '').length >= 16;
+}
+
+function toggleKeyVisibility() {
+    const btn = document.getElementById('toggleVisibility');
+    const isHidden = inputKey.type === 'password';
+    inputKey.type = isHidden ? 'text' : 'password';
+    btn.setAttribute('aria-label', isHidden ? 'Ocultar chave' : 'Mostrar chave');
+    btn.textContent = isHidden ? '🙈' : '👁';
 }
 
 function startOTP() {
     clearInterval(interval);
-    const key = document.getElementById("key").value.trim();
+    const key = inputKey.value.trim();
+
     if (!isValidBase32(key)) {
         invalid.style.display = key.length > 0 ? 'block' : 'none';
         otpContainer.style.display = 'none';
         return;
     }
+
+    invalid.style.display = 'none';
     otpContainer.style.display = 'block';
-    const encodedKey = encodeURIComponent(key);
-    const params = new URLSearchParams({ otp: encodedKey });
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    history.replaceState(null, "", newUrl);
+
+    const params = new URLSearchParams({ otp: key });
+    history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
 
     updateOTP(key);
     interval = setInterval(() => updateOTP(key), 1000);
 }
 
 function copyOTP() {
-    const otp = document.getElementById("otp").textContent;
+    const otp = otpCode.textContent;
+    if (!otp) return;
     navigator.clipboard.writeText(otp);
-    document.getElementById("copied").style.display = "block";
-    setTimeout(() => document.getElementById("copied").style.display = "none", 5000);
+    const copied = document.getElementById('copied');
+    copied.classList.add('show');
+    clearTimeout(copyOTP._timeout);
+    copyOTP._timeout = setTimeout(() => copied.classList.remove('show'), 2000);
 }
 
 async function updateOTP(base32Key) {
@@ -47,9 +60,8 @@ async function updateOTP(base32Key) {
     const timeCounter = Math.floor(epochTime / timeStep);
     const timeRemaining = timeStep - (epochTime % timeStep);
 
-    if (timeRemaining === 30 || otpCode.textContent === "") {
-        const otp = await computeTOTP(base32Key, timeCounter);
-        otpCode.textContent = otp;
+    if (timeRemaining === 30 || otpCode.textContent === '') {
+        otpCode.textContent = await computeTOTP(base32Key, timeCounter);
     }
 
     updateProgressCircle(timeRemaining, timeStep);
@@ -62,13 +74,14 @@ async function computeTOTP(base32Key, counter) {
 }
 
 function base32Decode(str) {
-    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-    let bits = "", result = [];
-    str = str.replace(/=+$/, "").toUpperCase();
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    let bits = '';
+    const result = [];
+    str = str.replace(/=+$/, '').toUpperCase();
 
     for (let i = 0; i < str.length; i++) {
-        let val = alphabet.indexOf(str[i]);
-        bits += val.toString(2).padStart(5, "0");
+        const val = alphabet.indexOf(str[i]);
+        bits += val.toString(2).padStart(5, '0');
     }
 
     for (let i = 0; i < bits.length - 7; i += 8) {
@@ -81,8 +94,8 @@ function base32Decode(str) {
 async function hmacSHA1(key, counter) {
     const counterBuffer = new ArrayBuffer(8);
     new DataView(counterBuffer).setBigUint64(0, BigInt(counter));
-    const cryptoKey = await crypto.subtle.importKey("raw", key, { name: "HMAC", hash: "SHA-1" }, false, ["sign"]);
-    return new Uint8Array(await crypto.subtle.sign("HMAC", cryptoKey, counterBuffer));
+    const cryptoKey = await crypto.subtle.importKey('raw', key, { name: 'HMAC', hash: 'SHA-1' }, false, ['sign']);
+    return new Uint8Array(await crypto.subtle.sign('HMAC', cryptoKey, counterBuffer));
 }
 
 function truncateOTP(hmac) {
@@ -93,11 +106,14 @@ function truncateOTP(hmac) {
         ((hmac[offset + 2] & 0xff) << 8) |
         (hmac[offset + 3] & 0xff);
 
-    return (binary % 1_000_000).toString().padStart(6, "0");
+    return (binary % 1_000_000).toString().padStart(6, '0');
 }
 
 function updateProgressCircle(timeRemaining, totalTime) {
-    const progressCircle = document.getElementById("progressCircle");
-    const dashOffset = (timeRemaining / totalTime) * 251.2;
-    progressCircle.style.strokeDashoffset = dashOffset;
+    const circumference = 2 * Math.PI * 52;
+    progressCircle.style.strokeDasharray = circumference;
+    progressCircle.style.strokeDashoffset = (timeRemaining / totalTime) * circumference;
+
+    progressCircle.classList.toggle('warning', timeRemaining <= 10 && timeRemaining > 5);
+    progressCircle.classList.toggle('danger', timeRemaining <= 5);
 }
