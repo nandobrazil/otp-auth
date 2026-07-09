@@ -265,14 +265,18 @@ input#key:focus {
   inset: 0;
   margin: auto;
   width: fit-content;
+  max-width: 100px;
   height: fit-content;
+  overflow: hidden;
+  white-space: nowrap;
   background: none;
   border: none;
   cursor: pointer;
   font-family: "SF Mono", "Menlo", "Consolas", monospace;
-  font-size: 1.7rem;
+  font-size: 1.35rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
+  text-align: center;
   color: var(--text);
   padding: 0;
 }
@@ -318,6 +322,11 @@ input#key:focus {
 .icon-hint {
   color: var(--accent-2);
   margin-top: 0.15rem;
+}
+
+.hint p {
+  margin: 0;
+  min-width: 0;
 }
 
 .hint kbd {
